@@ -9,6 +9,8 @@ let snake = [{ x: 10, y: 10 }];
 let direction = "right";
 let gameRunning = false;
 let isGameOver = false;
+let isGameAllowed = true;
+let highScore = 1;
 
 function draw() {
   if(gameRunning) {
@@ -122,10 +124,12 @@ function generateFood() {
 }
 
 function resetGame() {
+  isGameAllowed = false;
   isGameOver = true;
   document.getElementById("snakeImg").style.display = "inline";
   document.getElementById("gameCanvas").style.transform = "translateY(-100px)";
   gameRunning = false;
+  highScore = snake.length - 1;
   snake = [{ x: 10, y: 10 }];
   direction = "right";
   generateFood();
@@ -133,13 +137,16 @@ function resetGame() {
 }
 
 function startGame(){
-  isGameOver = false;
-  document.getElementById("snakeImg").style.display = "none";
-  document.getElementById("gameCanvas").style.transform = "translateY(100px)";
-  gameRunning = true;
-  let food;
-  generateFood();
-  draw();
+  if(isGameAllowed){
+    isGameOver = false;
+    document.getElementById("snakeImg").style.display = "none";
+    document.getElementById("gameCanvas").style.transform = "translateY(100px)";
+    gameRunning = true;
+    let food;
+    generateFood();
+    draw();
+  }
+  
 }
 
 function drawStartScreen() {
@@ -149,7 +156,7 @@ function drawStartScreen() {
 
   if (isGameOver){
     ctx.fillStyle = "red";
-    let text = "Game Over!";
+    let text = "Game Over! Schlangenlänge: " + highScore;
     let textWidth = ctx.measureText(text).width;
   
     // Zentrieren Sie den Text horizontal und vertikal
@@ -167,7 +174,8 @@ function drawStartScreen() {
       x = (canvasSize - textWidth) / 2;
       y = canvasSize / 2;
       ctx.fillText(text, x, y);
-    }, 1000)
+      isGameAllowed = true;
+    }, 3000)
   }else{
     const text = "Durch Drücken einer Pfeiltaste Spiel starten";
     const textWidth = ctx.measureText(text).width;
